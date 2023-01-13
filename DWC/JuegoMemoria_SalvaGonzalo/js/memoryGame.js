@@ -30,21 +30,27 @@ class Tablero {
     }
 
     drawBoard() {
-        // Creamos el tablero en html
-        document.write('<table>');
+        // Creamos el tablero en DOM
+        let tabla = document.createElement('table');
+        let fila;
+        let columna;
 
         for (let i = 0; i < this.rows; i++) {
-            document.write('<tr>');
+            fila = document.createElement('tr');
+            tabla.appendChild(fila);
 
             for (let j = 0; j < this.columns; j++) {
-                document.write(`<td>${this.arrayTablero[i][j]}</td>`);
+                columna = document.createElement('td');
+                columna.id = `f${i}_c${j}`;
+                columna.dataset.fila = i;
+                columna.dataset.columna = j;
+                columna.dataset.despejado = false;
+                fila.appendChild(columna);
             }
-
-            document.write('</tr>');
         }
-        document.write('</table>');
-    }
 
+        document.body.appendChild(tabla);
+    }
 }
 
 
@@ -105,22 +111,24 @@ class MemoryGame extends Tablero {
 }
 
 /* MAIN */ 
+window.onload = function() {
 
-do {
-    let numrows = prompt('¿Cuantas filas quieres?');
-    let numcolumns = prompt('¿Cuantas columnas quieres?');
+    do {
+        let numrows = prompt('¿Cuantas filas quieres?');
+        let numcolumns = prompt('¿Cuantas columnas quieres?');
 
-    var exit = false;
+        var exit = false;
 
-    if (numcolumns % 2 == 0){
-        exit = true;
-        
-        let memoryGame = new MemoryGame(numrows, numcolumns);
-        memoryGame.drawBoard();
+        if (numcolumns % 2 == 0){
+            exit = true;
+            
+            let memoryGame = new MemoryGame(numrows, numcolumns);
+            memoryGame.drawBoard();
 
-    } else{
-        window.alert("ERROR: Debes introducir números pares. Intentalo de nuevo, por favor");
-    }
+        } else{
+            window.alert("ERROR: Debes introducir números pares. Intentalo de nuevo, por favor");
+        }
 
-} while (!exit);
+    } while (!exit);
 
+}

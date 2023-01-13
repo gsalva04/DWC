@@ -19,7 +19,7 @@ class Tablero {
         }
     }
 
-    dibujarTablero() {
+    dibujarTableroHTML() {
         // Creamos el tablero en html
         document.write('<table>');
 
@@ -27,13 +27,38 @@ class Tablero {
             document.write('<tr>');
 
             for (let j = 0; j < this.columnas; j++) {
-                document.write(`<td>${this.arrayTablero[i][j]}</td>`);
+                document.write(`<td></td>`);
             }
 
             document.write('</tr>');
         }
         document.write('</table>');
     }
+
+    dibujarTableroDOM(){
+        // Creamos el tablero en DOM
+        let tabla = document.createElement('table');
+        let fila;
+        let columna;
+
+        for (let i = 0; i < this.filas; i++) {
+            fila = document.createElement('tr');
+            tabla.appendChild(fila);
+
+            for (let j = 0; j < this.columnas; j++) {
+                columna = document.createElement('td');
+                columna.id = `f${i}_c${j}`;
+                columna.dataset.fila = i;
+                columna.dataset.columna = j;
+                fila.appendChild(columna);
+            }
+        }
+
+        document.body.appendChild(tabla);
+    }
+
+    
+    
 
     modificarFilas(nuevasFilas) {
         // Modificar el número de filas y volver a crear el tablero con las filas nuevas
@@ -100,8 +125,119 @@ class Buscaminas extends Tablero {
             }
         }
     }
+
+    dibujarTableroDOM(){
+        super.dibujarTableroDOM();
+
+        let celda;
+
+        for (let i = 0; i < this.filas; i++) {
+            for (let j = 0; j < this.columnas; j++){
+                celda = document.getElementById(`f${i}_c${j}`);
+
+                celda.addEventListener('click', this.despejar.bind(this));
+                celda.addEventListener('contextmenu', this.marcar.bind(this));
+            }
+        }
+        console.log(this.arrayTablero);
+    }
+
+    despejar(elEvento) {
+        let evento = elEvento || window.event;
+        let celda = evento.currentTarget;
+        let fila = celda.dataset.fila;
+        let columna = celda.dataset.columna;
+
+        let valorCelda = this.arrayTablero[fila][columna];
+        let esNumero = (valorCelda != 'MINA' && valorCelda != 0);
+        let esBomba = (valorCelda == 'MINA');
+        let bombaSeleccionadaMal;
+
+        let rutaBandera = "file:///Users/gonzalosalva/Desktop/2_DAW/DWC/DWC/Buscaminas/img/bandera.png";
+        
+        let arrayFilas;
+        let arrayColumnas; 
+
+        if (esNumero) {
+            celda.innerHTML = valorCelda;
+            celda.removeEventListener('click', this.despejar.bind(this));
+            celda.removeEventListener('contextmenu', this.marcar.bind(this));
+        } else if (esBomba) {
+            
+            arrayFilas = celda.parentNode.parentNode.childNodes;
+            for (let tr of arrayFilas) {
+                arrayColumnas = tr.childNodes;
+                for (let td of arrayColumnas){
+                    td.removeEventListener('click', this.despejar.bind(this));
+                    td.removeEventListener('contextmenu', this.marcar.bind(this));
+
+                    fila = td.dataset.fila;
+                    columna = td.dataset.columna;
+                    valorCelda = this.arrayTablero[fila][columna]
+                    if (td.lastChild != null){
+                        bombaSeleccionadaMal = (td.lastChild.src ==  rutaBandera && valorCelda != 'MINA');
+                    
+                        if (bombaSeleccionadaMal){
+                            td.lastChild.src = "";
+                            td.style.backgroundColor = 'red';
+                            td.innerHTML = valorCelda;
+                        } else if (valorCelda == 'MINA') {
+                            td.innerHTML = valorCelda;
+                        }
+                    } else if (valorCelda == 'MINA') {
+                            td.innerHTML = valorCelda;
+                    }
+                }
+            }
+            alert(`¡HAS PERDIDO!`);
+        }
+
+    }
+
+    marcar(elEvento) {
+        let evento = elEvento || window.event;
+        let celda = evento.currentTarget;
+        // Utilizando el elemento img
+        let imagen = document.createElement('img');
+        imagen.style.height = "50px";
+        
+        if (celda.lastChild == null) {
+            imagen.src = "img/bandera.png";
+            celda.appendChild(imagen);
+        } else if (celda.lastChild.src == "file:///Users/gonzalosalva/Desktop/2_DAW/DWC/DWC/Buscaminas/img/bandera.png") {
+            celda.lastChild.src = "img/interrogante.png";
+        } else if (celda.lastChild.src == "file:///Users/gonzalosalva/Desktop/2_DAW/DWC/DWC/Buscaminas/img/interrogante.png") {
+            celda.removeChild(celda.lastChild);
+        }
+        // Utilizando los formatos UNICODE de JS
+        /*
+        if (this.innerHTML == "") {
+            this.innerHTML = "\uD83D\uDEA9";
+        } else if (this.innerHTML == "\uD83D\uDEA9") {
+            this.innerHTML = "\u2754";
+        } else if(this.innerHTML == "\u2754") {
+            this.innerHTML = "";
+        };
+        */
+
+        // Utilizando clases en el .css
+        /*
+         switch (this.className) {
+            case "":
+                this.className = "bandera";
+                break;
+            case "bandera":
+                this.className = "interrogante";
+                break;
+            default:
+                this.className = "";
+                break;
+         }
+        */  
+    }
 }
 
-let buscaminas1 = new Buscaminas(5, 5, 5);
-console.log(buscaminas1.arrayTablero);
-buscaminas1.dibujarTablero();
+window.onload = function() {
+    let buscaminas1 = new Buscaminas(5, 5, 5);
+    buscaminas1.dibujarTableroDOM();
+}
