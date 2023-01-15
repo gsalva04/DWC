@@ -2,17 +2,7 @@ class Tablero {
     constructor(rows, columns) {
         this.rows = rows;
         this.columns = columns;
-        this.arrayImg = ["<img src='img/athletic.jpg'>", 
-        "<img src='img/atletico.jpg'>",
-        "<img src='img/barcelona.jpg'>",
-        "<img src='img/betis.jpg'>",
-        "<img src='img/españa.jpg'>",
-        "<img src='img/mallorca.jpg'>",
-        "<img src='img/realMadrid.jpg'>",
-        "<img src='img/sevilla.jpg'>",
-        "<img src='img/valencia.jpg'>",
-        "<img src='img/villareal.jpg'>",
-    ];
+        this.arrayImg = ["🇦🇷", "🇧🇪","🇧🇷","🇨🇦","🇨🇱","🇩🇪","🇪🇦","🇭🇷", "🇫🇷","🇮🇹",];
         this.createBoard();
     }
 
@@ -32,20 +22,20 @@ class Tablero {
     drawBoard() {
         // Creamos el tablero en DOM
         let tabla = document.createElement('table');
-        let fila;
-        let columna;
+        let row;
+        let column;
 
         for (let i = 0; i < this.rows; i++) {
-            fila = document.createElement('tr');
-            tabla.appendChild(fila);
+            row = document.createElement('tr');
+            tabla.appendChild(row);
 
             for (let j = 0; j < this.columns; j++) {
-                columna = document.createElement('td');
-                columna.id = `f${i}_c${j}`;
-                columna.dataset.fila = i;
-                columna.dataset.columna = j;
-                columna.dataset.despejado = false;
-                fila.appendChild(columna);
+                column = document.createElement('td');
+                column.id = `f${i}_c${j}`;
+                column.dataset.row = i;
+                column.dataset.column = j;
+                column.dataset.despejado = false;
+                row.appendChild(column);
             }
         }
 
@@ -63,7 +53,6 @@ class MemoryGame extends Tablero {
     }
 
     putImage() {
-
         let arrayPosition = 0;
         let rowRandom1;
         let columnRandom1;
@@ -107,7 +96,33 @@ class MemoryGame extends Tablero {
             }
 
         }
+
+        super.drawBoard();
+        let cellSelected;
+
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.columns; j++) {
+                cellSelected = document.getElementById(`f${i}_c${j}`);
+
+                this.clickImageAndCheck = this.clickImageAndCheck.bind(this);
+
+                cellSelected.addEventListener('click', this.clickImageAndCheck);
+                
+            }
+        }
     }
+
+    clickImageAndCheck(elEvento){
+        let evento = elEvento || window.event;
+        let cell = evento.currentTarget;
+        let row = parseInt(cell.dataset.row);
+        let column = parseInt(cell.dataset.column);
+
+        let emoji = this.arrayTablero[row][column];
+
+        cell.innerHTML = emoji;
+    }
+
 }
 
 /* MAIN */ 
@@ -122,8 +137,7 @@ window.onload = function() {
         if (numcolumns % 2 == 0){
             exit = true;
             
-            let memoryGame = new MemoryGame(numrows, numcolumns);
-            memoryGame.drawBoard();
+            new MemoryGame(numrows, numcolumns);
 
         } else{
             window.alert("ERROR: Debes introducir números pares. Intentalo de nuevo, por favor");
