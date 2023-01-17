@@ -8,19 +8,18 @@ class Tablero {
 
     createBoard() {
         // Crear array bidimensional para guardar las minas
-        this.arrayTablero = [];
+        this.arrayBoard = [];
 
         for (let row = 0; row < this.rows; row++) {
-            this.arrayTablero[row] = [];
+            this.arrayBoard[row] = [];
 
             for (let columns = 0; columns < this.columns; columns++) {
-                this.arrayTablero[row][columns] = '';
+                this.arrayBoard[row][columns] = '';
             }
         }
     }
 
     drawBoard() {
-        // Creamos el tablero en DOM
         let tabla = document.createElement('table');
         let row;
         let column;
@@ -34,7 +33,6 @@ class Tablero {
                 column.id = `f${i}_c${j}`;
                 column.dataset.row = i;
                 column.dataset.column = j;
-                column.dataset.despejado = false;
                 row.appendChild(column);
             }
         }
@@ -68,33 +66,24 @@ class MemoryGame extends Tablero {
             let exit = false;
 
             while(exit == false){
-
                 rowRandom1 = Math.floor(Math.random() * this.rows);
                 columnRandom1 = Math.floor(Math.random() * this.columns);
 
-                if (this.arrayTablero[rowRandom1][columnRandom1] == '') {
-                    this.arrayTablero[rowRandom1][columnRandom1] = this.arrayImg[arrayPosition];
+                if (this.arrayBoard[rowRandom1][columnRandom1] == '') {
+                    this.arrayBoard[rowRandom1][columnRandom1] = this.arrayImg[arrayPosition];
                     rowRandom2 = Math.floor(Math.random() * this.rows);
                     columnRandom2 = Math.floor(Math.random() * this.columns);
 
-                    if (this.arrayTablero[rowRandom2][columnRandom2] == '') {
-                        this.arrayTablero[rowRandom2][columnRandom2] = this.arrayImg[arrayPosition];
-                        exit = true;
-                        arrayPosition++;
-                    } else {
-                        while (this.arrayTablero[rowRandom2][columnRandom2] != '') {
-                            rowRandom2 = Math.floor(Math.random() * this.rows);
-                            columnRandom2 = Math.floor(Math.random() * this.columns);
+                    while (this.arrayBoard[rowRandom2][columnRandom2] != '') {
+                        rowRandom2 = Math.floor(Math.random() * this.rows);
+                        columnRandom2 = Math.floor(Math.random() * this.columns);
 
-                        }
-                        this.arrayTablero[rowRandom2][columnRandom2] = this.arrayImg[arrayPosition];
-                        exit = true;
-                        arrayPosition++;
                     }
-
+                    this.arrayBoard[rowRandom2][columnRandom2] = this.arrayImg[arrayPosition];
+                    exit = true;
+                    arrayPosition++;
                 }
             }
-
         }
 
         super.drawBoard();
@@ -102,14 +91,25 @@ class MemoryGame extends Tablero {
 
         for (let i = 0; i < this.rows; i++) {
             for (let j = 0; j < this.columns; j++) {
+                //Celda seleccionada asignadmos id
                 cellSelected = document.getElementById(`f${i}_c${j}`);
 
+                //
                 this.clickImageAndCheck = this.clickImageAndCheck.bind(this);
 
-                cellSelected.addEventListener('click', this.clickImageAndCheck);
+                //Celda seleccioanada CLICLK y método de comprobar
+                cellSelected.addEventListener('contextmenu', this.clickImageAndCheck);
                 
             }
         }
+
+        //Botón reinciar
+        const botonReiniciar = document.createElement('button');
+        botonReiniciar.type = 'button';
+        botonReiniciar.innerText = 'Reiniciar';
+        document.body.appendChild(botonReiniciar);
+        this.resetGame = this.resetGame.bind(this)
+        botonReiniciar.addEventListener("click", this.resetGame);
     }
 
     clickImageAndCheck(elEvento){
@@ -118,11 +118,27 @@ class MemoryGame extends Tablero {
         let row = parseInt(cell.dataset.row);
         let column = parseInt(cell.dataset.column);
 
-        let emoji = this.arrayTablero[row][column];
-
+        let emoji = this.arrayBoard[row][column];
+        
+        //Mete el emeoji en la posicion del arrayBoard
         cell.innerHTML = emoji;
     }
 
+    resetGame(){
+
+        if (window.confirm("Confirmar reinicio")) {
+            let celda;
+        
+            for (let i = 0; i < this.rows; i++) {
+                for (let j = 0; j < this.columns; j++) {
+                    celda = document.getElementById(`f${i}_c${j}`);
+                    celda.addEventListener("contextmenu",this.marcar);
+                    celda.innerHTML = "";
+                }
+            }
+          }
+
+    }
 }
 
 /* MAIN */ 
@@ -136,7 +152,6 @@ window.onload = function() {
 
         if (numcolumns % 2 == 0){
             exit = true;
-            
             new MemoryGame(numrows, numcolumns);
 
         } else{

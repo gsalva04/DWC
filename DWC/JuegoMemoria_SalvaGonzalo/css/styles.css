@@ -29,6 +29,14 @@ img{
     width: 85%;
 }
 
+button{
+    height: 30px;
+    width: 100px;
+    border-radius: 7px;
+    margin-top: 50px;
+    margin-left: 42%;
+}
+
 .textos{
     text-align: center;
     padding-top: 20px;
