@@ -104,12 +104,12 @@ class MemoryGame extends Tablero {
         }
 
         //Botón reinciar
-        const ressetButton = document.createElement('button');
-        ressetButton.type = 'button';
-        ressetButton.innerText = 'Reiniciar';
-        document.body.appendChild(ressetButton);
+        const botonReiniciar = document.createElement('button');
+        botonReiniciar.type = 'button';
+        botonReiniciar.innerText = 'Reiniciar';
+        document.body.appendChild(botonReiniciar);
         this.resetGame = this.resetGame.bind(this)
-        ressetButton.addEventListener("click", this.resetGame);
+        botonReiniciar.addEventListener("click", this.resetGame);
     }
 
     clickImageAndCheck(elEvento){
@@ -127,12 +127,13 @@ class MemoryGame extends Tablero {
     resetGame(){
 
         if (window.confirm("Confirmar reinicio")) {
-            let cell;
+            let celda;
         
             for (let i = 0; i < this.rows; i++) {
                 for (let j = 0; j < this.columns; j++) {
-                    cell = document.getElementById(`f${i}_c${j}`);
-                    cell.innerHTML = "";
+                    celda = document.getElementById(`f${i}_c${j}`);
+                    celda.addEventListener("contextmenu",this.marcar);
+                    celda.innerHTML = "";
                 }
             }
           }
