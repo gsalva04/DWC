@@ -1,0 +1,47 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+
+body{
+	background-color: #778899;
+}
+
+table{
+    margin:auto;
+    margin-top: 5%;
+    text-align: center;
+}
+
+td,table{
+    border:solid 2px white;
+    border-collapse: collapse;
+}
+
+td{
+    text-align: center;
+    padding: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+
+button{
+    height: 30px;
+    width: 130px;
+    border-radius: 7px;
+    margin-top: 50px;
+    margin-left: 47%;
+}
+
+img{
+    width: 85%;
+}
+
+.textos{
+    text-align: center;
+    padding-top: 20px;
+    color: #fff;
+    font-family: impact;
+    letter-spacing: 2px;
+}
