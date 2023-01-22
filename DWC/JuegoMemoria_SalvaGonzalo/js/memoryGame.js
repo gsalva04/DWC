@@ -34,7 +34,7 @@ class Board {
                 column.dataset.row = i;
                 column.dataset.column = j;
                 column.dataset.nothing = false;
-
+                //hide the menu when you clic with the right button of the
                 document.oncontextmenu = function(){return false};
             }
         }
@@ -50,8 +50,13 @@ class MemoryGame extends Board {
         super(rows,columns);
         this.firstClick;
         this.secondClick;
-
         this.counter = 0;
+
+        this.points = 0;
+        this.maxPoints = this.rows*this.columns/2 * 10;;
+        this.attempts = 0;
+
+        this.couples = 0;
 
         this.putImage();
     }
@@ -90,7 +95,6 @@ class MemoryGame extends Board {
                     arrayPosition++;
                 }
             }
-
         }
 
         super.drawBoard();
@@ -108,14 +112,17 @@ class MemoryGame extends Board {
                 document.oncontextmenu = function(){return false};
             }
         }  
-        //Bttn RESET
+
+        //Reset button
         const ressetButton = document.createElement('button');
         ressetButton.type = 'button';
         ressetButton.innerText = 'VOLVER A EMPEZAR';
         document.body.appendChild(ressetButton);
         this.resetGame = this.resetGame.bind(this);
-
         ressetButton.addEventListener("click", this.resetGame);
+
+        //Points text
+        document.getElementById("puntos").innerHTML = ("Puntuación: " + this.points + "/" + this.maxPoints);
     }
 
     clickImageAndCheck(elEvento){
@@ -125,6 +132,11 @@ class MemoryGame extends Board {
         let column = cell.dataset.column;
         let emoji;
 
+        let maxCouples = this.rows*this.columns/2;
+
+        /*If counter is 0 means you made the firts click when you want to make a couple with the flags. 
+        and if the counter is 1 means you made the second click for see if you did the couple right or wrong.
+        */
         switch (this.counter) {
             case 0:
                 emoji = this.arrayBoard[row][column];
@@ -154,12 +166,22 @@ class MemoryGame extends Board {
                     cell.dataset.nothing = false;
                     cell.addEventListener("contextmenu",this.clickImageAndCheck);
                     }, 500);
+
+                    this.attempts++;
+                } else{
+                    this.attempts++;
+                    this.couples++;
+                    this.puntuation(this.attempts);
                 }
 
+                //Check end of the game
+                if(this.couples == maxCouples){
+                    window.alert("¡ENHORABUENA, HAS GANADO! \nTu puntuación ha sido: " + this.points + " puntos");
+                }
+                
                 this.counter = 0;
 
-              break;
-
+                break;
           }
     }
 
@@ -167,6 +189,30 @@ class MemoryGame extends Board {
         if (window.confirm("¿Seguro que quieres volver a empezar la partida?")) {
             location.reload()
         }
+    }
+
+    puntuation(attempts){
+
+        switch(attempts){
+            case 1:
+                this.points = this.points + 10;
+                break;
+            
+            case 2:
+                this.points = this.points + 5;
+                break;
+            
+            case 3:
+                this.points = this.points + 2.5;
+                break;
+            
+            case 4:
+                this.points = this.points + 0;
+                break;
+        }
+
+        this.attempts = 0;
+        document.getElementById("puntos").innerHTML = ("Puntuación: " + this.points + "/" + this.maxPoints);
     }
 }
 
