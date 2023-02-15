@@ -33,7 +33,6 @@ class Board {
                 column.id= `f${i}_c${j}`;
                 column.dataset.row = i;
                 column.dataset.column = j;
-                column.dataset.nothing = false;
                 //hide the menu when you clic with the right button of the
                 document.oncontextmenu = function(){return false};
             }
@@ -141,7 +140,6 @@ class MemoryGame extends Board {
             case 0:
                 emoji = this.arrayBoard[row][column];
                 cell.innerHTML = emoji;    
-                cell.dataset.nothing = true;
                 this.firstClick = [row,column];
                 cell.removeEventListener("contextmenu",this.clickImageAndCheck);
                 this.counter = 1;
@@ -150,7 +148,6 @@ class MemoryGame extends Board {
             case 1:
                 emoji = this.arrayBoard[row][column];
                 cell.innerHTML = emoji;            
-                cell.dataset.nothing = true;
                 this.secondClick = [row,column]
     
                 if (this.arrayBoard[this.secondClick[0]][[this.secondClick[1]]] !=
@@ -158,12 +155,10 @@ class MemoryGame extends Board {
     
                 setTimeout(() => {
                     cell.innerHTML = "";
-                    cell.dataset.nothing = false;
                     cell.addEventListener("contextmenu",this.clickImageAndCheck);
             
                     cell = document.getElementById(`f${this.firstClick[0]}_c${this.firstClick[1]}`);
                     cell.innerHTML = "";
-                    cell.dataset.nothing = false;
                     cell.addEventListener("contextmenu",this.clickImageAndCheck);
                     }, 500);
 
@@ -187,7 +182,7 @@ class MemoryGame extends Board {
 
     resetGame(){
         if (window.confirm("¿Seguro que quieres volver a empezar la partida?")) {
-            location.reload()
+            location.reload();
         }
     }
 
