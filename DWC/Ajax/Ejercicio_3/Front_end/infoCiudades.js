@@ -1,4 +1,3 @@
-//Metodo que obtiene los Paises de la BBDD gracias al back
 function mostrarPaises() {
 
   let xmlhttp = new XMLHttpRequest();
@@ -6,18 +5,17 @@ function mostrarPaises() {
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
       let select = document.getElementById("dropdwnPaises");
-      let paises =JSON.parse(this.responseText);
-      //console.log(paises);
+      let paises =this.responseText.split(", ");
+
       let opcionDefecto = document.createElement("option");
       opcionDefecto.value="-";
       opcionDefecto.innerHTML="-";
       select.appendChild(opcionDefecto);
 
       for (let i = 0; i < paises.length; i++) {
-        //console.log(paises[i]['Name']);
         let option = document.createElement("option");
-        option.value = paises[i]['Name'];
-        option.innerHTML = paises[i]['Name'];
+        option.value = paises[i];
+        option.innerHTML = paises[i];
         select.appendChild(option);
       }
     }
@@ -26,29 +24,26 @@ function mostrarPaises() {
   xmlhttp.send();
 }
 
-//Metodo que obtiene las Ciudades filtrando por Pais de la BBDD gracias al back
 function mostrarCiudades(pais) {
   pais = this.value;
   let xmlhttp = new XMLHttpRequest();
 
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      
+
       let select = document.getElementById("dropdwnCiudades");
       select.innerHTML = null;//NULL
-      //console.log(this.responseText);
-      let ciudades = JSON.parse(this.responseText);
-      //console.log(ciudades);
+      let ciudades = this.responseText.split(", ");
+
       let opcionDefecto = document.createElement("option");
       opcionDefecto.value="-";
       opcionDefecto.innerHTML="-";
       select.appendChild(opcionDefecto);
 
       for (let i = 0; i < ciudades.length; i++) {
-        //console.log(ciudades[i]);
         let option = document.createElement("option");
-        option.value = ciudades[i]['Name'];
-        option.innerHTML = ciudades[i]['Name'];
+        option.value = ciudades[i];
+        option.innerHTML = ciudades[i];
         select.append(option);
       }
     }
@@ -57,26 +52,24 @@ function mostrarCiudades(pais) {
   xmlhttp.send();
 }
 
-//Metodo que obtiene la información de las ciudades filtrando por Ciudad y Pais en BBDD gracias al back
 function mostrarInfoCiudades(ciudad) {
   ciudad = this.value;
   let xmlhttp = new XMLHttpRequest();
 
   xmlhttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-      console.log(this.responseText);
+
       let div = document.getElementById("tablaInfoCiudades");
       div.innerHTML = null;
-
-      let infoCiudades = JSON.parse(this.responseText);
+      let infoCiudades = this.responseText.split(", ");
 
       let ciudad = document.createElement("h3");
       let distrito = document.createElement("p");
       let poblacion = document.createElement("p");
 
-      ciudad.innerHTML = infoCiudades[0]['Name'];
-      distrito.innerHTML = "Distrito: " + infoCiudades[0]['district'];
-      poblacion.innerHTML = "Población: " + infoCiudades[0]['population'];
+      ciudad.innerHTML = infoCiudades[0];
+      distrito.innerHTML = "Distrito: " + infoCiudades[1];
+      poblacion.innerHTML = "Población: " + infoCiudades[2];
 
       div.appendChild(ciudad);
       div.appendChild(distrito);
